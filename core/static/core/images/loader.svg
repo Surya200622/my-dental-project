@@ -1,0 +1,14 @@
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rotating Outer Circle (Broken/Segmented) -->
+  <g class="spinner">
+    <path d="M50 10 A40 40 0 0 1 90 50" stroke="#00b8b8" stroke-width="4" stroke-linecap="round" />
+    <path d="M50 90 A40 40 0 0 1 10 50" stroke="#00b8b8" stroke-width="4" stroke-linecap="round" />
+  </g>
+  
+  <!-- Tooth Icon (Center) -->
+  <path d="M35 30 C35 20, 45 20, 50 25 C55 20, 65 20, 65 30 C65 45, 60 55, 60 65 C60 75, 65 80, 65 80 L50 75 L35 80 C35 80, 40 75, 40 65 C40 55, 35 45, 35 30 Z" 
+        stroke="#00b8b8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        
+  <!-- Shine/Detail on Tooth -->
+  <path d="M58 35 Q60 35 60 40" stroke="#00b8b8" stroke-width="2" stroke-linecap="round" />
+</svg>

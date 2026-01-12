@@ -1,0 +1,938 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dental Experts</title>
+  <link rel="icon" href="{% static 'core/images/images.jpg' %}" type="image/x-icon">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'core/css/all.min.css' %}"> <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'core/css/normalize.css' %}">
+  <link rel="stylesheet" href="{% static 'core/css/style.css' %}?v=3">
+  <style>
+    /* Focus styles for contact form inputs */
+    #contactForm input:focus,
+    #contactForm textarea:focus,
+    #contactForm select:focus {
+      outline: none;
+      border-color: #00b8b8 !important;
+      box-shadow: 0 0 0 2px rgba(0, 184, 184, 0.2);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- LOADER OVERLAY -->
+  <div id="loaderOverlay" aria-hidden="true">
+    <div class="loader-content">
+      <div class="spinner-ring"></div>
+      <i class="fas fa-tooth tooth-icon"></i>
+    </div>
+  </div>
+
+  <!-- AUTH SECTION -->
+  <center>
+    <div id="auth-section" class="auth-container" role="main">
+      <div class="auth-box" aria-live="polite">
+        <h2 id="form-title">Login</h2>
+
+        <!-- LOGIN -->
+        <form id="loginForm" novalidate>
+          <input type="email" id="loginEmail" placeholder="Email" autocomplete="email" autocapitalize="off" required />
+          <div class="field-row" style="margin-top:6px;">
+            <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required
+              style="padding-right:44px;">
+            <button type="button" class="pwd-toggle" data-target="loginPassword"
+              aria-label="Toggle password visibility"><i id="loginPwdIcon" class="fas fa-lock"></i></button>
+          </div>
+          <div class="field-row" style="margin-top:6px; justify-content: space-between; align-items: center;">
+             <label style="font-size: 1.2rem; color: #666; cursor: pointer;">
+                 <input type="checkbox" id="adminLoginToggle" style="width: auto; margin-right: 5px;">
+                 Login as Admin
+             </label>
+             <p id="loginMessage" style="margin-top:0"></p>
+          </div>
+          <button type="submit">Login</button>
+        </form>
+
+        <!-- SIGNUP -->
+        <form id="signupForm" style="display:none;" novalidate>
+          <input type="text" id="signupName" placeholder="Full Name" autocapitalize="off" required />
+          <input type="email" id="signupEmail" placeholder="Email" autocapitalize="off" required />
+
+          <!-- Age Input -->
+          <input type="number" id="signupAge" placeholder="Age (Optional)" min="1" max="120"
+            style="margin-top:0.8rem;" />
+
+          <!-- Blood Group Select -->
+          <select id="signupBloodGroup"
+            style="margin-top:0.8rem; padding:1rem; border:1px solid #ddd; border-radius:0.5rem; font-size:1.4rem; width:100%; color:#666;">
+            <option value="">Blood Group (Optional)</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+
+          <!-- Gender Select -->
+          <select id="signupGender"
+            style="margin-top:0.8rem; padding:1rem; border:1px solid #ddd; border-radius:0.5rem; font-size:1.4rem; width:100%; color:#666;">
+            <option value="">Gender (Optional)</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+
+          <div style="margin: 0.8rem 0;">
+            <label for="signupPic"
+              style="font-size:1.4rem; color:var(--light-color); display:block; text-align:left; margin-bottom:0.4rem;">Profile
+              Picture (Optional):</label>
+            <input type="file" id="signupPic" accept="image/*" style="padding:0.5rem; font-size:1.4rem;" />
+          </div>
+          <div class="field-row" style="margin-top:6px;">
+            <input type="password" id="signupPassword" placeholder="Password" required style="padding-right:44px;">
+            <button type="button" class="pwd-toggle" data-target="signupPassword"
+              aria-label="Toggle password visibility"><i id="signupPwdIcon" class="fas fa-lock"></i></button>
+          </div>
+          <div class="field-row" style="margin-top:6px;">
+            <input type="password" id="confirmPassword" placeholder="Confirm Password" required
+              style="padding-right:44px;">
+            <button type="button" class="pwd-toggle" data-target="confirmPassword"
+              aria-label="Toggle password visibility"><i id="confirmPwdIcon" class="fas fa-lock"></i></button>
+          </div>
+          <button type="submit">Sign Up</button>
+          <p id="signupMessage" style="margin-top:.6rem"></p>
+        </form>
+
+        <p class="toggle-text" style="margin-top:1rem">
+          Don't have an account?
+          <a href="#" id="toggleLink" role="button">Sign Up</a>
+        </p>
+      </div>
+    </div>
+  </center>
+  <!-- MAIN SITE (hidden until login) -->
+  <div id="main-site" class="hidden" aria-hidden="true">
+    <!-- START HEADER -->
+    <header class="header">
+      <div class="container">
+        <div class="row">
+          <a href="#" class="logo" aria-label="Dental Experts Home">
+            <img src="{% static 'core/images/logo.svg' %}" alt="Logo" class="site-logo">
+          </a>
+
+          <nav class="nav" role="navigation" aria-label="Main navigation">
+            <a href="#home" class="active">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#teams">Teams</a>
+            <a href="#ratings">Reviews</a>
+            <a href="#blog">Blog</a>
+          </nav>
+
+          <div class="auth-buttons" style="display:flex; align-items:center; gap:12px;">
+            <!-- Dropdown Container -->
+            <div class="user-dropdown-container" id="userDropdownContainer" style="display:none;">
+              <button class="dropdown-toggle" id="userMenuBtn">
+                <img id="headerProfilePic" src="" alt="Profile" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 0.8rem; border: 2px solid #00b8b8; display: none;">
+                <span id="userWelcome">Welcome, User</span>
+                <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="dropdown-menu" id="userDropdownMenu">
+                <a href="#dashboard" id="dashLink" class="dropdown-item"><i class="fas fa-user-circle"></i>
+                  Dashboard</a>
+                <a href="#" id="logoutBtn" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+              </div>
+            </div>
+          </div>
+
+          <div id="menu-btn" class="fas fa-bars" role="button" aria-label="Menu"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- LANDING PAGE CONTENT (Home, About, Services, etc.) -->
+    <div id="landing-page-content">
+
+      <!-- HOME -->
+      <section class="home" id="home">
+        <div class="container">
+          <div class="row">
+            <div class="content">
+              <h3 style="color: #00b8b8;">We are best dental services</h3>
+              <p>Welcome to our dental experts, where we combine advanced technology with compassionate care to deliver
+                exceptional oral health solutions. Our team of experienced professionals is dedicated to providing
+                personalized treatment plans and ensuring your comfort while creating the beautiful, healthy smile you
+                deserve.</p>
+              <a href="#appointment" class="link-btn" style="display: inline-block; margin-top: 2rem;">Book Appointment</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="about" id="about">
+        <div class="container">
+          <div class="row">
+            <div class="image"><img src="{% static 'core/images/about-img.jpg' %}" alt=""></div>
+            <div class="content">
+              <span>about us</span>
+              <h3>true healthcare for your family</h3>
+              <p>We understand that every family member has unique dental needs, which is why we provide comprehensive care tailored to patients of all ages, from children to seniors. Our modern facility is equipped with cutting-edge technology and staffed by gentle, experienced professionals who prioritize your family's comfort and well-being, ensuring a positive dental experience for everyone.</p>
+              
+              <div id="aboutMoreContent" style="display: none; margin-top: 1rem;">
+                <p>At Dental Experts, we believe in preventive care and patient education. Our team takes the time to explain each procedure, answer your questions, and develop personalized treatment plans that fit your lifestyle and budget. We offer a wide range of services including routine cleanings, cosmetic dentistry, orthodontics, and emergency care.</p>
+                <p>Our commitment extends beyond dental health – we strive to create lasting relationships with our patients built on trust, transparency, and exceptional care. With flexible scheduling, insurance guidance, and a warm, welcoming environment, we make quality dental care accessible and stress-free for the entire family.</p>
+              </div>
+              
+              <button onclick="toggleAboutContent()" id="aboutReadMoreBtn" class="link-btn" style="margin-top: 1.5rem;">Read More</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVICES -->
+      <section class="services" id="services">
+        <h1 class="heading">Our services</h1>
+        <div class="services-container">
+          <div class="services-left">
+            <div class="box">
+              <img src="{% static 'core/images/icon-1.svg' %}" alt="">
+              <h3>Alignment specialist</h3>
+              <p>Experience advanced dental alignment using state-of-the-art technology to create your perfect smile.</p>
+            </div>
+            <div class="box">
+              <img src="{% static 'core/images/icon-2.svg' %}" alt="">
+              <h3>Cosmetic dentistry</h3>
+              <p>Transform your smile with professional whitening, veneers, and bonding that enhance both aesthetics and function.</p>
+            </div>
+            <div class="box">
+              <img src="{% static 'core/images/icon-3.svg' %}" alt="">
+              <h3>Oral hygiene experts</h3>
+              <p>Professional cleanings and preventive care with personalized education to maintain optimal dental health.</p>
+            </div>
+          </div>
+
+          <div class="services-image">
+            <img src="{% static 'core/images/services-img-details2.png' %}" alt="Dental services">
+          </div>
+
+          <div class="services-right">
+            <div class="box">
+              <img src="{% static 'core/images/icon-4.svg' %}" alt="">
+              <h3>Root canal specialist</h3>
+              <p>Gentle endodontic techniques and modern technology to relieve pain and preserve your natural tooth.</p>
+            </div>
+            <div class="box">
+              <img src="{% static 'core/images/icon-5.svg' %}" alt="">
+              <h3>Live dental advisory</h3>
+              <p>Get instant access to experienced dentists for patient guidance and personalized treatment recommendations.</p>
+            </div>
+            <div class="box">
+              <img src="{% static 'core/images/icon-6.svg' %}" alt="">
+              <h3>Cavity inspection</h3>
+              <p>Advanced diagnostic tools and thorough examinations to detect cavities early and prevent dental problems.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEAMS -->
+      <section class="team" id="teams">
+        <h1 class="heading">Our team</h1>
+        <div class="team-container">
+          <div class="team-grid">
+            <div class="team-member">
+              <div class="image"><img src="{% static 'core/images/team-1.jpg' %}" alt="Doctor Profile"></div>
+              <div class="content">
+                <h3>Sarah Cooper</h3>
+                <span>Alignment specialist</span>
+                <div class="social-links"><a href="#" class="fab fa-facebook-f"></a><a href="#"
+                    class="fab fa-twitter"></a><a href="#" class="fab fa-instagram"></a></div>
+              </div>
+            </div>
+            <div class="team-member">
+              <div class="image"><img src="{% static 'core/images/ChatGPT Image Jan 5, 2026, 09_38_44 AM.png' %}" alt="Doctor Profile"></div>
+              <div class="content">
+                <h3>John Doe</h3>
+                <span>Root canal specialist</span>
+                <div class="social-links"><a href="#" class="fab fa-facebook-f"></a><a href="#"
+                    class="fab fa-twitter"></a><a href="#" class="fab fa-instagram"></a></div>
+              </div>
+            </div>
+            <div class="team-member">
+              <div class="image"><img src="{% static 'core/images/team-3.jpg' %}" alt="Doctor Profile"></div>
+              <div class="content">
+                <h3>Emily Rodriguez</h3>
+                <span>Cosmetic dentistry</span>
+                <div class="social-links"><a href="#" class="fab fa-facebook-f"></a><a href="#"
+                    class="fab fa-twitter"></a><a href="#" class="fab fa-instagram"></a></div>
+              </div>
+            </div>
+            <div class="team-member">
+              <div class="image"><img src="{% static 'core/images/team-4.jpg' %}" alt="Doctor Profile"></div>
+              <div class="content">
+                <h3>David Parker</h3>
+                <span>Oral hygiene experts</span>
+                <div class="social-links"><a href="#" class="fab fa-facebook-f"></a><a href="#"
+                    class="fab fa-twitter"></a><a href="#" class="fab fa-instagram"></a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROCESS -->
+      <section class="process">
+        <h1 class="heading">Work process</h1>
+        <div class="box-container container">
+          <div class="box"><img src="{% static 'core/images/process-1.png' %}" alt="">
+            <h3>Cosmetic dentistry</h3>
+            <p>Our cosmetic dentistry process starts with a thorough consultation and digital smile design, followed by
+              a tailored treatment plan (whitening, bonding, veneers or aligners), precise, minimally invasive
+              procedures, and scheduled follow-up to ensure lasting, natural-looking results.</p>
+          </div>
+          <div class="box"><img src="{% static 'core/images/process-2.png' %}" alt="">
+            <h3>Pediatric dentistry</h3>
+            <p>We create a child-friendly pediatric dentistry experience starting with a gentle exam and age-appropriate
+              education, followed by preventive treatments (sealants, fluoride), comfortable restorations when needed,
+              and regular recall visits to support lifelong healthy smiles.</p>
+          </div>
+          <div class="box"><img src="{% static 'core/images/process-3.png' %}" alt="">
+            <h3>Dental Implants</h3>
+            <p>Our dental implant process starts with a detailed consultation and 3D imaging to design a personalized
+              plan, followed by precise implant placement and a healing period for osseointegration, then abutment and
+              natural-looking crown placement, plus scheduled follow-ups to ensure long-term function and comfort.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- DOCTOR RATING SECTION -->
+      <section class="rating-section" id="ratings" style="padding: 4rem 9%; background: #f0fdfd; scroll-margin-top: 100px;">
+        <h1 class="heading">Rate Our Doctors</h1>
+        
+        <!-- Rating Form -->
+        <div class="container" style="max-width: 700px; margin: 0 auto 4rem auto;">
+          <form id="ratingForm" style="background: #fff; padding: 3rem; border-radius: 1rem; box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.1);">
+            
+            <div class="field-group" style="margin-bottom: 2rem;">
+              <span style="display: block; font-size: 1.6rem; color: #333; margin-bottom: 0.8rem; font-weight: 500;">Select Doctor</span>
+              <select id="ratingDoctor" class="box" required style="width: 100%; padding: 1.2rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1.5rem; color: #666;">
+                <option value="" disabled selected>Choose a Doctor</option>
+                <option value="Sarah Cooper">Sarah Cooper (General Surgeon)</option>
+                <option value="John Doe">John Doe (Cardiologist)</option>
+                <option value="Emily Rodriguez">Emily Rodriguez (Neurologist)</option>
+                <option value="David Parker">David Parker (Pediatrician)</option>
+              </select>
+            </div>
+
+            <div class="field-group" style="margin-bottom: 2rem;">
+              <span style="display: block; font-size: 1.6rem; color: #333; margin-bottom: 0.8rem; font-weight: 500;">Your Rating</span>
+              <div class="star-rating" style="display: flex; gap: 0.5rem; font-size: 3rem; cursor: pointer;">
+                <i class="far fa-star rating-star" data-rating="1"></i>
+                <i class="far fa-star rating-star" data-rating="2"></i>
+                <i class="far fa-star rating-star" data-rating="3"></i>
+                <i class="far fa-star rating-star" data-rating="4"></i>
+                <i class="far fa-star rating-star" data-rating="5"></i>
+              </div>
+              <input type="hidden" id="selectedRating" value="0">
+            </div>
+
+            <div class="field-group" style="margin-bottom: 2rem;">
+              <span style="display: block; font-size: 1.6rem; color: #333; margin-bottom: 0.8rem; font-weight: 500;">Your Review</span>
+              <textarea id="reviewText" class="box" rows="5" placeholder="Share your experience with the doctor..." autocapitalize="off" required style="width: 100%; padding: 1.2rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1.5rem; resize: vertical; font-family: 'Poppins', sans-serif;"></textarea>
+            </div>
+
+            <button type="submit" class="link-btn" style="width: 100%; padding: 1.2rem; font-size: 1.6rem;">Submit Rating</button>
+            <div id="rating-message" style="margin-top: 1.5rem; font-size: 1.4rem; text-align: center;"></div>
+          </form>
+        </div>
+
+        <!-- Display Ratings -->
+        <h1 class="heading" style="margin-top: 4rem;">Recent Reviews</h1>
+        <div class="carousel-wrapper" style="position: relative; max-width: 100%; margin: 0 auto; padding: 0 2rem;">
+          <button class="carousel-btn prev-btn" id="reviewsPrevBtn"><i class="fas fa-chevron-left"></i></button>
+          
+          <div id="ratingsDisplay" class="carousel-container" style="display: flex; gap: 2rem; overflow-x: auto; scroll-behavior: smooth; padding: 2rem 0; scrollbar-width: none;">
+            <!-- Ratings will be dynamically loaded here -->
+            <p style="text-align: center; color: #666; font-size: 1.5rem; width: 100%;">Loading reviews...</p>
+          </div>
+          
+          <button class="carousel-btn next-btn" id="reviewsNextBtn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </section>
+
+
+      <!-- APPOINTMENT -->
+      <section class="appointment" id="appointment">
+        <h1 class="heading">Make appointment</h1>
+        <form id="sheetForm">
+          <div class="field-group"><span>Full Name</span><input type="text" name="name" placeholder="Your Name" autocapitalize="off"
+              class="box" required></div>
+          <div class="field-group"><span>Email Address</span><input type="email" name="email" placeholder="Your Email" autocapitalize="off"
+              class="box" required></div>
+          <div class="field-group"><span>Phone Number</span><input type="tel" name="number"
+              placeholder="Your Phone Number" class="box" required></div>
+          <div class="field-group">
+            <span>Select Doctor</span>
+            <select name="doctor" class="box" required>
+              <option value="" disabled selected>Choose a Doctor</option>
+              <option value="Sarah Cooper">Sarah Cooper (General Surgeon)</option>
+              <option value="John Doe">John Doe (Cardiologist)</option>
+              <option value="Emily Rodriguez">Emily Rodriguez (Neurologist)</option>
+              <option value="David Parker">David Parker (Pediatrician)</option>
+            </select>
+          </div>
+          <div class="field-group"><span>Preferred Date & Time</span><input type="datetime-local" name="date"
+              class="box" required></div>
+          <input type="submit" value="Book Appointment" class="link-btn">
+          <div id="form-message"></div>
+        </form>
+      </section>
+
+
+
+      <!-- BLOG -->
+      <section class="blog" id="blog">
+        <h1 class="heading">Our blogs</h1>
+        <div class="box-container">
+          <div class="box">
+            <div class="image">
+              <img src="{% static 'core/images/blog-1.jpg' %}" alt="Dental Treatment Drill" />
+            </div>
+            <div class="content">
+              <h3>Painless Tooth Cavity Removing Treatment</h3>
+              <p class="blog-text">
+                Modern dentistry offers advanced tools that make cavity drilling almost pain-free treatment...
+                <span class="hidden-text">
+                  The use of high-speed dental handpieces ensures minimal vibration and reduces discomfort.
+                  Local anesthesia is applied to numb the area, making the entire procedure smooth and painless.
+                  After cleaning the decayed portion, a safe and durable filling material is placed to restore tooth
+                  strength.
+                  Patients can return to normal eating habits within a few hours.
+                </span>
+              </p>
+              <button class="read-more-btn">Read More</button>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="image">
+              <img src="{% static 'core/images/blog-2.jpg' %}" alt="Dental Cleaning" />
+            </div>
+            <div class="content">
+              <h3>Professional Dental Cleaning Benefits</h3>
+              <p class="blog-text">
+                Routine dental cleaning removes stubborn plaque and tartar that brushing cannot eliminate...
+                <span class="hidden-text">
+                  Dental hygienists use specialized tools to deep clean teeth and prevent gum infections.
+                  This procedure helps maintain fresh breath, reduces cavity risk, and improves overall oral hygiene.
+                  A professional cleaning every six months is recommended for everyone, especially those with
+                  sensitivity or stains.
+                </span>
+              </p>
+              <button class="read-more-btn">Read More</button>
+            </div>
+          </div>
+
+          <div class="box">
+            <div class="image">
+              <img src="{% static 'core/images/blog-3.jpg' %}" alt="Dental Examination" />
+            </div>
+            <div class="content">
+              <h3>Why Regular Dental Checkups Matter</h3>
+              <p class="blog-text">
+                Dental checkups help detect hidden oral issues before they become painful or expensive...
+                <span class="hidden-text">
+                  Dentists inspect teeth, gums, bone structure, and soft tissues for signs of infection or decay.
+                  Early detection prevents tooth loss, gum disease, and oral cancer risks.
+                  A 6-month visit allows professional guidance on brushing habits, food choices, and preventive
+                  treatments.
+                </span>
+              </p>
+              <button class="read-more-btn">Read More</button>
+            </div>
+          </div>
+      </section>
+
+      <!-- GET IN TOUCH (Contact Form) -->
+      <section class="contact-section" id="contact" style="padding: 4rem 9%; background: #f0fdfd;">
+        <h1 class="heading">Get In Touch</h1>
+        <div class="container" style="max-width: 700px; margin: 0 auto;">
+          <form id="contactForm" style="background: #fff; padding: 3rem; border-radius: 1rem; box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.1);">
+            <div class="field-group" style="margin-bottom: 2rem;">
+              <label for="name" style="display: block; font-size: 1.6rem; color: #333; margin-bottom: 0.8rem; font-weight: 500;">Name:</label>
+              <input type="text" id="contactName" name="contactName" placeholder="Your name" autocapitalize="off" required class="box" style="width: 100%; padding: 1.2rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1.5rem;">
+            </div>
+
+            <div class="field-group" style="margin-bottom: 2rem;">
+              <label for="email" style="display: block; font-size: 1.6rem; color: #333; margin-bottom: 0.8rem; font-weight: 500;">Email:</label>
+              <input type="email" id="contactEmail" name="contactEmail" placeholder="Your email" autocapitalize="off" required class="box" style="width: 100%; padding: 1.2rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1.5rem;">
+            </div>
+
+            <div class="field-group" style="margin-bottom: 2rem;">
+              <label for="number" style="display: block; font-size: 1.6rem; color: #333; margin-bottom: 0.8rem; font-weight: 500;">Mobile no:</label>
+              <input type="tel" id="contactNumber" name="contactNumber" placeholder="Your mobile no"
+                inputmode="numeric" pattern="\d{10}" maxlength="10" required title="Enter 10 digit mobile number"
+                oninput="this.value = this.value.replace(/\D/g,'').slice(0,10);" class="box" style="width: 100%; padding: 1.2rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1.5rem;">
+            </div>
+
+            <div class="field-group" style="margin-bottom: 2rem;">
+              <label for="cmessage" style="display: block; font-size: 1.6rem; color: #333; margin-bottom: 0.8rem; font-weight: 500;">Message:</label>
+              <textarea id="contactMessage" name="contactMessage" rows="5" placeholder="Your message" autocapitalize="off"
+                required class="box" style="width: 100%; padding: 1.2rem; border: 1px solid #ddd; border-radius: 0.5rem; font-size: 1.5rem; resize: vertical; font-family: 'Poppins', sans-serif;"></textarea>
+            </div>
+
+            <button type="button" onclick="sendEmail()" class="link-btn" style="width: 100%; padding: 1.2rem; font-size: 1.6rem;">GET CALL BACK</button>
+            <div id="callback-message" class="callback-message" aria-live="polite" style="margin-top: 1.5rem; font-size: 1.4rem; text-align: center;"></div>
+          </form>
+        </div>
+      </section>
+    </div> <!-- End landing-page-content -->
+
+    <!-- DASHBOARD SECTION (Independent View) -->
+    <section class="dashboard" id="dashboard" style="display:none; padding:8rem 9% 4rem 9%;">
+      <h1 class="heading" style="text-align:center;">User Dashboard</h1>
+
+      <div class="row"
+        style="display:flex; flex-wrap:wrap; gap:2rem; justify-content:center; max-width:1400px; margin:0 auto;">
+
+        <!-- Profile Card -->
+        <div class="profile-card"
+          style="flex:1; min-width:300px; background:#f0fdfd; padding:2rem; border-radius:1rem; border:1px solid #00b8b8;">
+          <div style="text-align:center; margin-bottom:1rem;">
+            <img id="dashAvatar" src="{% static 'core/images/user_avatar.png' %}"
+              onerror="this.src='https://cdn-icons-png.flaticon.com/512/149/149071.png'" alt="User"
+              style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid #00b8b8;">
+            <h3 id="dashName" style="font-size:2rem; color:#333; margin-top:1rem;">Loading...</h3>
+            <p id="dashEmail" style="font-size:1.4rem; color:#666;">...</p>
+          </div>
+
+          <div class="info-section" style="margin-top:1.5rem;">
+            <!-- Age -->
+            <div style="margin-bottom:1rem;">
+              <h4 style="font-size:1.4rem; color:#00b8b8; margin-bottom:0.3rem;">Age</h4>
+              <p id="dashAge" style="font-size:1.3rem; color:#444;">Not set</p>
+              <input type="number" id="editAgeInput" min="1" max="120"
+                style="display:none; width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:0.5rem; font-size:1.3rem;"
+                placeholder="Enter age">
+            </div>
+
+            <!-- Blood Group -->
+            <div style="margin-bottom:1rem;">
+              <h4 style="font-size:1.4rem; color:#00b8b8; margin-bottom:0.3rem;">Blood Group</h4>
+              <p id="dashBloodGroup" style="font-size:1.3rem; color:#444;">Not set</p>
+              <select id="editBloodGroupInput"
+                style="display:none; width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:0.5rem; font-size:1.3rem;">
+                <option value="">Select blood group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+            </div>
+
+            <!-- Gender -->
+            <div style="margin-bottom:1rem;">
+              <h4 style="font-size:1.4rem; color:#00b8b8; margin-bottom:0.3rem;">Gender</h4>
+              <p id="dashGender" style="font-size:1.3rem; color:#444;">Not set</p>
+              <select id="editGenderInput"
+                style="display:none; width:100%; padding:0.8rem; border:1px solid #ddd; border-radius:0.5rem; font-size:1.3rem;">
+                <option value="">Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <input type="file" id="editProfilePicInput" accept="image/*" style="display:none;">
+            <p id="editPicHint"
+              style="display:none; color:#00b8b8; font-size:1.3rem; margin-top:0.5rem; cursor:pointer;"><i
+                class="fas fa-camera"></i> Click image to change</p>
+          </div>
+
+          <div style="margin-top:2rem; text-align:center;">
+            <button id="editProfileBtn" class="link-btn" style="padding:0.8rem 2rem; font-size:1.4rem;">Edit
+              Profile</button>
+            <button id="saveProfileBtn" class="link-btn"
+              style="display:none; padding:0.8rem 2rem; font-size:1.4rem; background:#00b8b8; color:#fff;">Save
+              Changes</button>
+            <button id="cancelProfileBtn" class="link-btn"
+              style="display:none; padding:0.8rem 2rem; font-size:1.4rem; background:#f8d7da; color:#721c24;">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Appointments List -->
+        <div class="appointments-card"
+          style="flex:2; min-width:300px; background:#fff; padding:2rem; border-radius:1rem; box-shadow:0 0.5rem 1.5rem rgba(0,0,0,0.1);">
+          <h3
+            style="font-size:2rem; color:#333; margin-bottom:1.5rem; border-bottom:2px solid #00b8b8; padding-bottom:0.5rem;">
+            My Appointments</h3>
+          <div id="appointmentsList" style="max-height:400px; overflow-y:auto;">
+            <p style="font-size:1.4rem; color:#666;">Loading appointments...</p>
+          </div>
+        </div>
+
+        <!-- Reports List -->
+        <div class="reports-card"
+          style="flex:1; min-width:300px; background:#fff; padding:2rem; border-radius:1rem; box-shadow:0 0.5rem 1.5rem rgba(0,0,0,0.1);">
+          <h3
+            style="font-size:2rem; color:#333; margin-bottom:1.5rem; border-bottom:2px solid #00b8b8; padding-bottom:0.5rem;">
+            My Medical Reports</h3>
+          <div id="userReportsList" style="max-height:400px; overflow-y:auto;">
+            <p style="font-size:1.4rem; color:#666;">Loading reports...</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ADMIN DASHBOARD SECTION -->
+    <section class="admin-dashboard" id="admin-dashboard" style="display:none; padding:8rem 2% 4rem 2%;">
+        <div class="container" style="max-width: 1200px; margin: auto;">
+            <h1 class="heading" style="text-align:center; margin-bottom: 2rem;">Admin Dashboard</h1>
+            
+            <div class="admin-tabs" style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap;">
+                <button class="link-btn active-tab" onclick="showAdminTab('overview')" style="min-width: 120px;">Overview</button>
+                <button class="link-btn" onclick="showAdminTab('users')" style="min-width: 120px;">Users</button>
+                <button class="link-btn" onclick="showAdminTab('appointments')" style="min-width: 120px;">Appointments</button>
+                <button class="link-btn" onclick="showAdminTab('doctors')" style="min-width: 120px;">Doctors</button>
+                <button class="link-btn" onclick="showAdminTab('ratings')" style="min-width: 120px;">Ratings</button>
+                <button class="link-btn" onclick="showAdminTab('reports')" style="min-width: 120px;">Reports</button>
+                <button class="link-btn" onclick="showAdminTab('settings')" style="min-width: 120px;">Settings</button>
+                <button class="link-btn" onclick="logout()" style="background: #f8d7da; color: #721c24; min-width: 120px;">Logout</button>
+            </div>
+
+            <div id="admin-content-overview" class="admin-tab-content">
+                <div class="box-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem;">
+                    <div class="box" style="text-align: center; border: 1px solid #00b8b8; padding: 2rem; border-radius: .5rem;">
+                        <i class="fas fa-users" style="font-size: 4rem; color: #00b8b8; margin-bottom: 1rem;"></i>
+                        <h3 style="font-size: 2rem; color: #333;">Total Users</h3>
+                        <p id="stat-total-users" style="font-size: 2.5rem; font-weight: bold; color: #00b8b8;">0</p>
+                    </div>
+                    <div class="box" style="text-align: center; border: 1px solid #00b8b8; padding: 2rem; border-radius: .5rem;">
+                         <i class="fas fa-calendar-check" style="font-size: 4rem; color: #00b8b8; margin-bottom: 1rem;"></i>
+                        <h3 style="font-size: 2rem; color: #333;">Total Appointments</h3>
+                        <p id="stat-total-appointments" style="font-size: 2.5rem; font-weight: bold; color: #00b8b8;">0</p>
+                    </div>
+                     <div class="box" style="text-align: center; border: 1px solid #00b8b8; padding: 2rem; border-radius: .5rem;">
+                         <i class="fas fa-user-md" style="font-size: 4rem; color: #00b8b8; margin-bottom: 1rem;"></i>
+                        <h3 style="font-size: 2rem; color: #333;">Total Doctors</h3>
+                        <p id="stat-total-doctors" style="font-size: 2.5rem; font-weight: bold; color: #00b8b8;">0</p>
+                    </div>
+                    <div class="box" style="text-align: center; border: 1px solid #00b8b8; padding: 2rem; border-radius: .5rem;">
+                         <i class="fas fa-star" style="font-size: 4rem; color: #00b8b8; margin-bottom: 1rem;"></i>
+                        <h3 style="font-size: 2rem; color: #333;">Total Ratings</h3>
+                        <p id="stat-total-ratings" style="font-size: 2.5rem; font-weight: bold; color: #00b8b8;">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-content-users" class="admin-tab-content" style="display:none;">
+                <h3 style="font-size: 2rem; margin-bottom: 1rem;">Registered Users</h3>
+                <div style="overflow-x:auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 1.4rem;">
+                        <thead>
+                            <tr style="background: #00b8b8; color: #fff;">
+                                <th style="padding: 1rem; text-align: left;">Name</th>
+                                <th style="padding: 1rem; text-align: left;">Email</th>
+                                <th style="padding: 1rem; text-align: left;">Age</th>
+                                <th style="padding: 1rem; text-align: left;">Gender</th>
+                                <th style="padding: 1rem; text-align: left;">Blood Type</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-content-appointments" class="admin-tab-content" style="display:none;">
+                 <h3 style="font-size: 2rem; margin-bottom: 1rem;">All Appointments</h3>
+                <div style="overflow-x:auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 1.4rem;">
+                        <thead>
+                            <tr style="background: #00b8b8; color: #fff;">
+                                <th style="padding: 1rem; text-align: left;">Patient</th>
+                                <th style="padding: 1rem; text-align: left;">Doctor</th>
+                                <th style="padding: 1rem; text-align: left;">Date</th>
+                                <th style="padding: 1rem; text-align: left;">Contact</th>
+                                <th style="padding: 1rem; text-align: left;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointments-table-body">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-content-doctors" class="admin-tab-content" style="display:none;">
+                <h3 style="font-size: 2rem; margin-bottom: 1rem;">Manage Doctors</h3>
+                
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    <!-- Add Doctor Form -->
+                     <form id="addDoctorForm" style="flex: 1; min-width: 300px; padding: 2rem; border: 1px solid #ddd; border-radius: .5rem;">
+                        <h4 style="font-size: 1.6rem; margin-bottom: 1rem;">Add New Doctor</h4>
+                        <input type="text" id="newDocName" placeholder="Doctor Name" required style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid #ccc; font-size: 1.4rem;">
+                        <input type="text" id="newDocSpec" placeholder="Specialization" required style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid #ccc; font-size: 1.4rem;">
+                        <button type="submit" class="link-btn" style="width: 100%;">Add Doctor</button>
+                    </form>
+                    
+                    <!-- Doctor List -->
+                    <div style="flex: 2; min-width: 300px;">
+                        <ul id="doctors-list" style="list-style: none; padding: 0;">
+                             <!-- Dynamic Content -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-content-ratings" class="admin-tab-content" style="display:none;">
+                <h3 style="font-size: 2rem; margin-bottom: 1rem;">All Ratings & Reviews</h3>
+                <div style="overflow-x:auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 1.4rem;">
+                        <thead>
+                            <tr style="background: #00b8b8; color: #fff;">
+                                <th style="padding: 1rem; text-align: left;">User</th>
+                                <th style="padding: 1rem; text-align: left;">Doctor</th>
+                                <th style="padding: 1rem; text-align: left;">Rating</th>
+                                <th style="padding: 1rem; text-align: left;">Review</th>
+                                <th style="padding: 1rem; text-align: left;">Date</th>
+                                <th style="padding: 1rem; text-align: left;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ratings-table-body">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="admin-content-reports" class="admin-tab-content" style="display:none;">
+                <h3 style="font-size: 2rem; margin-bottom: 2rem; color: #333; text-align: center;">Dental Examination Report</h3>
+                
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+                    
+                    <!-- LEFT: FORM -->
+                    <div style="flex: 2; min-width: 400px; background: #fff; padding: 2rem; border-radius: .5rem; border: 1px solid #ddd;">
+                        <form id="createReportForm">
+                            <input type="hidden" id="reportId"> <!-- For Edit Mode -->
+                            
+                            <!-- Row 1: Patient & Doctor -->
+                            <div style="display:flex; gap: 2rem; margin-bottom: 2rem;">
+                                <div style="flex:1;">
+                                    <label style="display:block; font-size:1.4rem; color:#00b8b8; font-weight:bold; margin-bottom:0.5rem;">Patient Email</label>
+                                    <select id="reportUserEmail" required style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px; background: #fff;">
+                                        <option value="">Select Patient...</option>
+                                        <!-- Populated via JS -->
+                                    </select>
+                                </div>
+                                <div style="flex:1;">
+                                    <label style="display:block; font-size:1.4rem; color:#00b8b8; font-weight:bold; margin-bottom:0.5rem;">Dentist Name</label>
+                                    <select id="reportDoctorName" required style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px; background: #fff;">
+                                        <option value="">Select Doctor...</option>
+                                        <!-- Populated via JS -->
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Row 2: Date & Title -->
+                            <div style="display:flex; gap: 2rem; margin-bottom: 2rem;">
+                                <div style="flex:1;">
+                                    <label style="display:block; font-size:1.4rem; color:#00b8b8; font-weight:bold; margin-bottom:0.5rem;">Report Date</label>
+                                    <input type="date" id="reportDate" style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px;">
+                                </div>
+                                <div style="flex:1;">
+                                    <label style="display:block; font-size:1.4rem; color:#00b8b8; font-weight:bold; margin-bottom:0.5rem;">Report Title</label>
+                                    <input type="text" id="reportTitle" placeholder="e.g. Comprehensive Exam" required style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px;">
+                                </div>
+                            </div>
+
+                            <!-- Detailed Fields -->
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display:block; font-size:1.4rem; color:#555; font-weight:bold; margin-bottom:0.5rem;">Chief Complaint</label>
+                                <textarea id="reportChiefComplaint" rows="2" style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px;"></textarea>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display:block; font-size:1.4rem; color:#555; font-weight:bold; margin-bottom:0.5rem;">Clinical Findings</label>
+                                <textarea id="reportClinicalFindings" rows="2" style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px;"></textarea>
+                            </div>
+
+                            <div style="display:flex; gap: 2rem; margin-bottom: 1.5rem;">
+                                <div style="flex:1;">
+                                    <label style="display:block; font-size:1.4rem; color:#555; font-weight:bold; margin-bottom:0.5rem;">Oral Hygiene</label>
+                                    <select id="reportOralHygiene" style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px; background:#fff;">
+                                        <option value="">Select...</option>
+                                        <option value="Good">Good</option>
+                                        <option value="Fair">Fair</option>
+                                        <option value="Poor">Poor</option>
+                                    </select>
+                                </div>
+                                <div style="flex:1;">
+                                    <label style="display:block; font-size:1.4rem; color:#555; font-weight:bold; margin-bottom:0.5rem;">Gums</label>
+                                    <select id="reportGums" style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px; background:#fff;">
+                                        <option value="">Select...</option>
+                                        <option value="Healthy">Healthy</option>
+                                        <option value="Bleeding">Bleeding</option>
+                                        <option value="Swollen">Swollen</option>
+                                        <option value="Receded">Receded</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display:block; font-size:1.4rem; color:#555; font-weight:bold; margin-bottom:0.5rem;">Teeth Condition</label>
+                                <textarea id="reportTeethCondition" rows="1" style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px;"></textarea>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display:block; font-size:1.4rem; color:#555; font-weight:bold; margin-bottom:0.5rem;">Diagnosis</label>
+                                <textarea id="reportDiagnosis" rows="2" style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px;"></textarea>
+                            </div>
+
+                            <div style="margin-bottom: 1.5rem;">
+                                <label style="display:block; font-size:1.4rem; color:#555; font-weight:bold; margin-bottom:0.5rem;">Treatment Provided / Planned</label>
+                                <textarea id="reportTreatmentPlan" rows="2" style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px;"></textarea>
+                            </div>
+
+                             <div style="margin-bottom: 1.5rem;">
+                                <label style="display:block; font-size:1.4rem; color:#555; font-weight:bold; margin-bottom:0.5rem;">Medications</label>
+                                <textarea id="reportMedications" rows="2" style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px;"></textarea>
+                            </div>
+                            
+                             <div style="margin-bottom: 2rem;">
+                                <label style="display:block; font-size:1.4rem; color:#555; font-weight:bold; margin-bottom:0.5rem;">Advice / Remarks</label>
+                                <textarea id="reportAdvice" rows="2" style="width: 100%; padding: 1rem; border: 1px solid #ccc; font-size: 1.4rem; border-radius: 4px;"></textarea>
+                            </div>
+
+                            <div style="display:flex; gap:1rem;">
+                                <button type="submit" class="link-btn" style="flex:1; background:#00b8b8; color:#fff;">Save Report</button>
+                                <button type="button" onclick="resetReportForm()" style="flex:1; padding:1rem; background:#666; color:#fff; border:none; border-radius: .5rem; cursor:pointer; font-size:1.4rem;" id="clearReportForm">Clear</button>
+                                <button type="button" onclick="resetReportForm()" style="display:none; flex:1; padding:1rem; background:#dc3545; color:#fff; border:none; border-radius: .5rem; cursor:pointer; font-size:1.4rem;" id="cancelReportEdit">Cancel Edit</button>
+                            </div>
+                             <p id="reportMsg" style="margin-top:0.5rem; font-size:1.3rem; text-align:center;"></p>
+                        </form>
+                    </div>
+
+                    <!-- RIGHT: LIST -->
+                    <div style="flex: 1; min-width: 300px;">
+                        <h4 style="font-size: 1.6rem; margin-bottom: 1rem; color: #333; border-bottom: 2px solid #00b8b8; padding-bottom: 0.5rem;">Existing Reports</h4>
+                        <div style="overflow-x:auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 1.3rem; background: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.05);">
+                                <thead>
+                                    <tr style="background: #00b8b8; color: #fff;">
+                                        <th style="padding: 1rem; text-align:left;">Patient / Date</th>
+                                        <th style="padding: 1rem; text-align:right;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reports-table-body">
+                                    <!-- Dynamic Content -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="admin-content-settings" class="admin-tab-content" style="display:none;">
+                <div style="max-width: 500px; margin: auto;">
+                    <h3 style="font-size: 2rem; margin-bottom: 1rem; text-align: center;">Change Admin Credentials</h3>
+                    <form id="adminSettingsForm" style="padding: 2rem; border: 1px solid #ddd; border-radius: .5rem;">
+                         <input type="text" id="adminCurrentUsername" placeholder="Current Username" readonly style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid #ccc; background: #eee; font-size: 1.4rem;">
+                        
+                         <h4 style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #00b8b8;">New Credentials</h4>
+                         <input type="text" id="adminNewUsername" placeholder="New Username" required style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid #ccc; font-size: 1.4rem;">
+                         <input type="password" id="adminNewPassword" placeholder="New Password" required style="width: 100%; padding: 1rem; margin-bottom: 1rem; border: 1px solid #ccc; font-size: 1.4rem;">
+                         
+                         <button type="submit" class="link-btn" style="width: 100%;">Update Credentials</button>
+                         <p id="adminSettingsMsg" style="margin-top: 1rem; font-size: 1.4rem;"></p>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Edit Appointment Modal -->
+            <div id="editApptModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:10000; justify-content:center; align-items:center;">
+                <div style="background:#fff; padding:2rem; border-radius:8px; width:90%; max-width:500px; position:relative;">
+                    <h3 style="font-size:2rem; margin-bottom:1.5rem; color:#00b8b8;">Edit Appointment</h3>
+                    <form id="editApptForm">
+                        <input type="hidden" id="editApptId">
+                        
+                        <label style="display:block; font-size:1.4rem; color:#555; margin-bottom:0.5rem;">Doctor:</label>
+                        <select id="editApptDoctor" style="width:100%; padding:1rem; margin-bottom:1rem; border:1px solid #ddd; font-size:1.4rem; border-radius:4px;">
+                            <!-- Options populated dynamically -->
+                        </select>
+                        
+                        <label style="display:block; font-size:1.4rem; color:#555; margin-bottom:0.5rem;">Date & Time:</label>
+                        <input type="datetime-local" id="editApptDate" style="width:100%; padding:1rem; margin-bottom:1rem; border:1px solid #ddd; font-size:1.4rem; border-radius:4px;">
+                        
+                        <label style="display:block; font-size:1.4rem; color:#555; margin-bottom:0.5rem;">Status:</label>
+                        <select id="editApptStatus" style="width:100%; padding:1rem; margin-bottom:1.5rem; border:1px solid #ddd; font-size:1.4rem; border-radius:4px;">
+                            <option value="Scheduled">Scheduled</option>
+                            <option value="Rescheduled">Rescheduled</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                        
+                        <div style="display:flex; gap:1rem; justify-content:flex-end;">
+                            <button type="button" onclick="closeEditApptModal()" style="padding:1rem 2rem; border:1px solid #ddd; background:#eee; font-size:1.4rem; cursor:pointer; border-radius:4px;">Cancel</button>
+                            <button type="submit" style="padding:1rem 2rem; border:none; background:#00b8b8; color:#fff; font-size:1.4rem; cursor:pointer; border-radius:4px;">Update</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- FOOTER (Hidden on Dashboard) -->
+    <footer class="footer" id="mainFooter">
+      <div class="footer-grid">
+        <div class="footer-box contact-info"><i class="fas fa-phone-alt"></i>
+          <h3>Contact us</h3>
+          <p>Emergency: +123-456-7890</p>
+          <p>Reception: +111-222-7890</p>
+          <p>Whatsapp: +999-888-7777</p>
+        </div>
+        <div class="footer-box location"><i class="fas fa-map-marker-alt"></i>
+          <h3>Visit Our Clinic</h3>
+          <p>Monday - Friday: 8:00 AM - 8:00 PM</p>
+          <p>Saturday: 9:00 AM - 6:00 PM</p>
+          <p>Sunday: Emergency Only</p>
+        </div>
+        <div class="footer-box connect"><i class="fas fa-envelope"></i>
+          <h3>Stay Connected</h3>
+          <p>appointment@dental-care.com</p>
+          <p>emergency@dental-care.com</p>
+          <div class="social-links"><a href="#" class="fab fa-facebook-f"></a><a href="#" class="fab fa-twitter"></a><a
+              href="#" class="fab fa-instagram"></a><a href="www.linkedin.com/in/suryacs22" class="fab fa-linkedin"></a></div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Dental Experts. All Rights Reserved</p>
+      </div>
+    </footer>
+
+  </div> <!-- main-site -->
+
+  <!-- Main Logic -->
+  <script src="{% static 'core/js/script.js' %}?v=20"></script>
+
+</body>
+
+</html>

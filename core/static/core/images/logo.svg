@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="80" viewBox="0 0 400 80" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">DentalExperts</title>
+  <desc id="logoDesc">Logo for DentalExperts with stylized D and E and clinic name</desc>
+  <defs>
+    <linearGradient id="g1" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#00b8b8"/>
+      <stop offset="100%" stop-color="#008080"/>
+    </linearGradient>
+  </defs>
+  <!-- Mark (DE) -->
+  <g transform="translate(8,8)">
+    <rect x="0" y="0" width="64" height="64" rx="12" ry="12" fill="url(#g1)" />
+    <text x="32" y="42" font-family="Poppins, Arial, sans-serif" font-size="32" font-weight="700" fill="#fff" text-anchor="middle">DE</text>
+  </g>
+  <!-- Wordmark -->
+  <g transform="translate(88,50)">
+    <text x="0" y="-6" font-family="Poppins, Arial, sans-serif" font-size="28" font-weight="700" fill="#333">Dental</text>
+    <text x="86" y="-6" font-family="Poppins, Arial, sans-serif" font-size="28" font-weight="700" fill="url(#g1)">Experts.</text>
+  </g>
+</svg>
